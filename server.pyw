@@ -1,12 +1,25 @@
+from http.server import BaseHTTPRequestHandler, HTTPServer
+import json
+import threading
 import subprocess
 import sys
+import time
+import os
+from datetime import datetime
+from PIL import Image, ImageTk
+from tkinter import Tk, Label, Button, StringVar, messagebox
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from webdriver_manager.chrome import ChromeDriverManager
 
 # List of required packages
 packages = [
     'Pillow',  # For Image and ImageTk
     'selenium',  # For web automation
     'webdriver-manager',  # For managing ChromeDriver
-    'tk',  # For tkinter (comes with Python but included here for clarity)
 ]
 
 def install(package):
@@ -25,28 +38,16 @@ def ensure_dependencies():
 # Ensure dependencies are installed
 ensure_dependencies()
 
-from tkinter import Tk, Label, Button, StringVar, messagebox, PhotoImage
-from tkinter import Toplevel
-from PIL import Image, ImageTk
-import threading
-from http.server import BaseHTTPRequestHandler, HTTPServer
-import json
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from datetime import datetime
-from webdriver_manager.chrome import ChromeDriverManager
-import time
-import os
-
-# Define the server handling class
 class RequestHandler(BaseHTTPRequestHandler):
     def _set_cors_headers(self):
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+
+    def do_OPTIONS(self):
+        self.send_response(200)
+        self._set_cors_headers()
+        self.end_headers()
 
     def do_POST(self):
         content_length = int(self.headers['Content-Length'])
@@ -62,12 +63,25 @@ class RequestHandler(BaseHTTPRequestHandler):
         name = data.get('name')
 
         if all([cadastro_number, city, bairro, date, period, title, name]):
+            # Get the current year
+            current_year = datetime.now().year
+
+            # Ensure the date format is dd/mm/yyyy and includes the current year if necessary
             try:
+                # Attempt to parse the date
                 parsed_date = datetime.strptime(date, "%d/%m/%Y")
-                formatted_date = parsed_date.strftime("%d%m%Y")
             except ValueError:
-                print(f"Error parsing date: {date}")
-                formatted_date = date
+                try:
+                    # Attempt to parse the date assuming the year is missing or incorrect
+                    parsed_date = datetime.strptime(date + f"/{current_year}", "%d/%m/%Y")
+                except ValueError:
+                    print(f"Error parsing date: {date}")
+                    parsed_date = None
+
+            if parsed_date:
+                formatted_date = parsed_date.strftime("%d%m%Y")
+            else:
+                formatted_date = date  # Fallback if parsing fails
 
             stored_data = {
                 "cadastro_number": cadastro_number,
@@ -163,7 +177,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                                 EC.presence_of_element_located((By.NAME, 'data'))
                             )
                             date_input.clear()
-                            date_input.send_keys(stored_data['date'])
+                            date_input.send_keys(formatted_date)
 
                             period_select = WebDriverWait(driver, 10).until(
                                 EC.presence_of_element_located((By.NAME, 'periodo'))
@@ -220,7 +234,7 @@ class RequestHandler(BaseHTTPRequestHandler):
         else:
             response = {
                 "message": "Dados necessários ausentes",
-                "received_data": stored_data
+                "received_data": {}
             }
 
         self.send_response(200)
@@ -228,12 +242,7 @@ class RequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(json.dumps(response).encode())
 
-    def do_OPTIONS(self):
-        self.send_response(200)
-        self._set_cors_headers()
-        self.end_headers()
-
-def run(server_class=HTTPServer, handler_class=RequestHandler, port=50000):
+def run(server_class=HTTPServer, handler_class=RequestHandler, port=50001):
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
     print(f'Iniciando o servidor na porta {port}...')

@@ -114,7 +114,7 @@ setTimeout(() => {
             console.log("Comentário extracted:", comentario);
 
             // Send data to the server
-            fetch('http://127.0.0.1:50000', {
+            fetch('http://localhost:50001/', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
