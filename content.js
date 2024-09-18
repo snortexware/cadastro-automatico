@@ -1,12 +1,12 @@
 setTimeout(() => {
   console.log("Script started...");
 
-  // Select all table elements
+
   const tableElements = document.querySelectorAll("table");
   console.log("Total tables found:", tableElements.length);
 
   if (tableElements.length > 2) {
-    // Extract data from the 3rd table
+    
     const table2 = tableElements[2];
     const tbody = table2.querySelector("tbody");
     if (!tbody) {
@@ -75,26 +75,26 @@ setTimeout(() => {
         console.error("Second <td> in the 9th row not found.");
       }
 
-      // Extract city, bairro, and cadastro number
+      
       const tdElement = document.querySelector('td[colspan="2"]');
       const boldElement = tdElement ? tdElement.querySelector('b') : null;
       const tdElement1 = document.getElementsByClassName('listas');
 
-      let city = 'Unknown'; // Default value
-      let bairro = 'Unknown'; // Default value
+      let city = 'Unknown'; 
+      let bairro = 'Unknown'; 
 
       if (tdElement && boldElement && tdElement1.length > 3) {
         const boldElement1 = tdElement1[3];
         const cityText = boldElement1.textContent;
 
-        // Log the full address text for inspection
+        
         console.log("Full address text:", cityText);
 
-        // Corrected regex to handle different address formats
+        
         const addressMatch = cityText.match(/^([^,]+),\s*([A-Z]{2}),\s*[^,]+,\s*[^,]+,\s*([^,]+),\s*CEP:\s*\d{8}/);
         if (addressMatch) {
-          city = addressMatch[1].trim(); // City is the first captured group
-          bairro = addressMatch[3].trim(); // Bairro is the third captured group
+          city = addressMatch[1].trim(); 
+          bairro = addressMatch[3].trim(); 
 
           console.log("City extracted:", city);
           console.log("Bairro extracted:", bairro);
@@ -108,13 +108,13 @@ setTimeout(() => {
             const cadastroNumber = match[1];
             console.log("Número do Cadastro:", cadastroNumber);
 
-            // Extract comentário (assuming it's in another table or section)
+           
             const comentarioElement = document.querySelector('#comentario');
             const comentario = comentarioElement ? comentarioElement.value : 'No comment';
             console.log("Comentário extracted:", comentario);
 
-            // Send data to the server
-            fetch('http://localhost:50001/', {
+            
+            fetch('https://localhost:4443/', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
