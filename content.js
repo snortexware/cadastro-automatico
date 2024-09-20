@@ -65,9 +65,25 @@ setTimeout(() => {
             console.log("Date extracted:", date);
           }
 
-          const periodMatch = p.textContent.trim().match(/Período:\s*(.+)/);
+          const periodMatch = p.textContent.trim().match(/Período:\s*(Dia Todo|Manhã|Tarde|manha|dia todo|tarde)(?=\s|$)/i);
           if (periodMatch && periodMatch[1]) {
-            period = periodMatch[1];
+            period = periodMatch[1]
+            switch(periodMatch[1].toLowerCase()){
+              case "Manha":
+                period = "Manhã"
+              break
+              case "manha":
+                period = "Manhã"
+              break
+              case "tarde": 
+              period = "Tarde"
+              break
+              case "dia todo": 
+              period = "Dia Todo"
+              break
+              default: period = periodMatch[1]
+              break
+            }
             console.log("Period extracted:", period);
           }
         });
@@ -114,7 +130,7 @@ setTimeout(() => {
             console.log("Comentário extracted:", comentario);
 
             
-            fetch('https://localhost:4443/', {
+            fetch('https://localhost:4443/submit', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',

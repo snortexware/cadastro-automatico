@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Selenium Automation</title>
+    <link rel="stylesheet" href="/styles.css"> <!-- Link to CSS -->
+</head>
+<body>
+    <div class="container">
+        <h1>Control Selenium Automation</h1>
+        <form id="dataForm">
+            <div class="form-group">
+                <label for="codCliente">Cod. Cliente:</label>
+                <input type="text" id="codCliente" name="codCliente" required>
+            </div>
+            <div class="form-group">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" name="nome" required>
+            </div>
+            <div class="button-group">
+                <button type="button" class="btn start" onclick="startAutomation()">Start</button>
+                <button type="button" class="btn stop" onclick="stopAutomation()">Stop</button>
+            </div>
+        </form>
+        <div id="message" class="message"></div>
+    </div>
+
+    <script>
+        function startAutomation() {
+            const codCliente = document.getElementById('codCliente').value;
+            const nome = document.getElementById('nome').value;
+
+            fetch('/start', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ codCliente, nome }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('message').innerText = data.message;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function stopAutomation() {
+            fetch('/stop', { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('message').innerText = data.message;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
