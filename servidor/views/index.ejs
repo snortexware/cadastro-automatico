@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Console de Automação</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #formularioAutomacao {
+            display: none;
+            margin-bottom: 20px;
+        }
+        #logs, #logsErros {
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #f9f9f9;
+            height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        button {
+            padding: 10px 15px;
+            margin-bottom: 20px;
+        }
+        img {
+            max-width: 200px; /* Limit the width of the logo */
+            height: auto;
+            margin-bottom: 20px;
+        }
+        .container {
+            display: flex;
+            align-items: flex-start;
+        }
+        .form-container {
+            flex: 1; /* Allow the form to take up space */
+            margin-right: 10px; /* Reduce space between form and counters */
+        }
+        .counter-container {
+            max-width: 150px; /* Limit the width of the counter section */
+            margin-left: 10px; /* Space between button and counters */
+            font-size: 14px; /* Smaller font size for counters */
+        }
+    </style>
+</head>
+<body>
+    <img src="/logao.png" alt="Logotipo">
+    <h1>Console de Automação</h1>
+
+    <button id="botaoToggleFormulario">Abrir Formulário</button>
+    <div class="form-container"></div>
+    <div class="container">
+        
+            <div id="formularioAutomacao">
+                <h2>Enviar Dados de Automação</h2>
+                <form id="form">
+                    <input type="text" name="name" placeholder="Nome" required>
+                    <input type="text" name="cadastro_number" placeholder="Número de Cadastro" required>
+                    <input type="text" name="city" placeholder="Cidade" required>
+                    <input type="text" name="bairro" placeholder="Bairro" required>
+                    <input type="text" name="date" placeholder="DD/MM" required>
+                    <input type="text" name="period" placeholder="Período" required>
+                    <input type="text" name="title" placeholder="Título" required>
+                    <textarea name="comentario" placeholder="Comentário" required></textarea>
+                    <button type="submit">Enviar</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="counter-container">
+            <h2>Contadores</h2>
+            <p>Sucessos: <span id="contagemSucessos">0</span></p>
+            <p>Erros: <span id="contagemErros">0</span></p>
+        </div>
+    </div>
+
+    <h2>Logs</h2>
+    <div id="logs"></div>
+    
+    <h2>Erros</h2>
+    <div id="logsErros"></div>
+
+    <script>
+        const ws = new WebSocket('wss://localhost:4443');
+    
+        ws.onmessage = (event) => {
+            const message = event.data;
+            try {
+                const data = JSON.parse(message);
+                if (data.successCount !== undefined) {
+                    document.getElementById('contagemSucessos').textContent = data.successCount;
+                }
+                if (data.errorCount !== undefined) {
+                    document.getElementById('contagemErros').textContent = data.errorCount;
+                }
+            } catch (error) {
+                logMessage(message);
+            }
+        };
+    
+        function logMessage(log) {
+            const logsDiv = document.getElementById('logs');
+            logsDiv.textContent += `${new Date().toLocaleTimeString()}: ${log}\n`;
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+    
+        function logError(errorMessage) {
+            const logsErrosDiv = document.getElementById('logsErros');
+            logsErrosDiv.textContent += `${new Date().toLocaleTimeString()}: ${errorMessage}\n`;
+            logsErrosDiv.scrollTop = logsErrosDiv.scrollHeight;
+        }
+    
+        document.getElementById('form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+    
+            try {
+                const response = await fetch('/start', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+    
+                const result = await response.json();
+                logMessage(result.message);
+    
+                if (!response.ok) {
+                    logError(result.message || 'Erro desconhecido ao iniciar a automação.');
+                }
+            } catch (error) {
+                logError(`Erro ao enviar dados: ${error.message}`);
+            }
+        });
+    
+        document.getElementById('botaoToggleFormulario').addEventListener('click', () => {
+            const form = document.getElementById('formularioAutomacao');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        });
+    </script>
+</body>
+</html>
