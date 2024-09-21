@@ -10,23 +10,23 @@ const WebSocket = require('ws');
 
 const app = express();
 
-// Middleware setup
+
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// View engine setup
+
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// HTTPS options
+
 const options = {
     key: fs.readFileSync(path.join(__dirname, 'server.pem')),
     cert: fs.readFileSync(path.join(__dirname, 'certificate.pem')),
 };
 
-// Initialize variables
+
 let driver;
 const logs = [];
 let successCount = 0;
@@ -45,10 +45,10 @@ function logMessage(message) {
     }
 }
 
-// Create HTTPS server
+
 const server = https.createServer(options, app);
 
-// Create WebSocket server
+
 const wsServer = new WebSocket.Server({ server });
 
 wsServer.on('connection', (ws) => {
@@ -57,9 +57,9 @@ wsServer.on('connection', (ws) => {
     ws.send(JSON.stringify({ successCount, errorCount }));
 });
 
-// Routes
+
 app.get('/', (req, res) => {
-    res.render('index'); // Ensure this matches your EJS filename
+    res.render('index'); 
 });
 
 app.post('/start', async (req, res) => {
@@ -67,6 +67,8 @@ app.post('/start', async (req, res) => {
 
     logMessage('Dados recebidos: ' + JSON.stringify({ name, cadastro_number, city, bairro, date, period, title, comentario }));
 
+    // Esse projeto foi realizado para uma automação em especifico utilizando selenium
+    // Então caso queira reutilizar o codigo, modifique todos os elementos e componentes de acordo com o site que estão utilizando
     if (!driver) {
         const chromeOptions = new chrome.Options()
             .addArguments('--headless=new')
@@ -74,12 +76,12 @@ app.post('/start', async (req, res) => {
         driver = await new Builder().forBrowser('chrome').setChromeOptions(chromeOptions).build();
 
         try {
-            await driver.get('http://172.16.6.10/sistema-ls/index.php');
-            await driver.findElement(By.name('txt_usuario')).sendKeys('lucas.moreira@gramnet.com.br');
-            await driver.findElement(By.name('txt_senha')).sendKeys('Lucas.moreira1');
+            await driver.get('yourwebsite');
+            await driver.findElement(By.name('')).sendKeys('');
+            await driver.findElement(By.name('')).sendKeys('');
             await driver.findElement(By.xpath('//button[@type="submit"]')).click();
-            await driver.wait(until.urlIs('http://172.16.6.10/sistema-ls/administrativo.php?pagina'), 10000);
-            await driver.get('http://172.16.6.10/sistema-ls/administrativo.php?pagina=adicionarsuporte');
+            await driver.wait(until.urlIs(''), 10000);
+            await driver.get('');
 
             logMessage("Login realizado com sucesso!");
 
@@ -140,11 +142,11 @@ app.post('/start', async (req, res) => {
     }
 });
 
-// Start the server
+
 const PORT = 4443;
 server.listen(PORT, () => {
     logMessage(`Iniciando servidor HTTPS na porta ${PORT}...`);
 });
 
-// Export the server instance
+
 module.exports = server;

@@ -1,12 +1,12 @@
-let hasFetched = false; // Flag to track if fetch has been executed
-
+let hasFetched = false;
+//Não funciona mais dessa forma, fui tapeado!
 function playErrorSound() {
   const audio = new Audio(chrome.runtime.getURL('https://www.myinstants.com/media/sounds/daf-error.mp3'));
   audio.play().catch(error => console.error('Error playing sound:', error));
 }
 
 setTimeout(() => {
-  if (hasFetched) return; // Exit if already fetched
+  if (hasFetched) return; 
 
   const tableElements = document.querySelectorAll("table");
 
@@ -50,6 +50,9 @@ setTimeout(() => {
       const secondTd7 = row7.querySelectorAll("td")[1];
       title = secondTd7 ? secondTd7.textContent.trim() : 'Unknown';
 
+      if (title.includes("LOS", "los", "sem conexão", "Sem conexão")){
+        return console.log("É LOS")
+      } else {
       const row9 = rows7[8];
       const secondTd9 = row9.querySelectorAll("td")[1];
       if (secondTd9) {
@@ -89,11 +92,12 @@ setTimeout(() => {
         }
       }
     }
+    }
 
     const comentarioElement = document.querySelector('#comentario');
     const comentario = comentarioElement ? comentarioElement.value : 'Sem comentário';
 
-    // Store the values in chrome.storage.local
+  
     chrome.storage.local.set({
       cadastroNumber,
       name,
@@ -105,7 +109,7 @@ setTimeout(() => {
       comentario
     });
 
-    // Send data to server
+  
     hasFetched = true;
 
     fetch('https://localhost:4443/start', {

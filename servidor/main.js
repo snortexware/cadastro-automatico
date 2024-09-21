@@ -14,21 +14,21 @@ function createWindow() {
         },
     });
 
-    // Ignore certificate errors
+  
     session.defaultSession.setCertificateVerifyProc((request, callback) => {
-        callback(0); // 0 means accept the certificate
+        callback(0); 
     });
 
-    mainWindow.maximize(); // Start maximized
-    mainWindow.loadURL('https://localhost:4443'); // Load your Express server URL
+    mainWindow.maximize(); 
+    mainWindow.loadURL('https://localhost:4443'); 
 
     mainWindow.on('closed', () => {
         mainWindow = null;
     });
 }
 
-// Start the server
-fork('server.js'); // Replace 'server.js' with your actual server filename
+
+fork('server.js');
 
 app.on('ready', createWindow);
 

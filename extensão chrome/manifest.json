@@ -15,7 +15,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://btv2.ksys.net.br/gramnet/bemtevi/documentos/os_imp_tecnico.php*"],
+      "matches": ["*://typeyourwebsitehere.com*"],
       "js": ["content.js"]
     }
   ]
