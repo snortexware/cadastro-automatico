@@ -1,0 +1,41 @@
+.container {
+    
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .qr-code{
+    
+    width: 500px;
+    height: 100;
+    font-family: 'trebuchet ms', sans-serif;
+    border-radius: 10px;
+    background-color: aliceblue;
+  }
+  
+  body {
+     /* Adjust the size of the image */
+        box-shadow: 0 0 15px 10px rgba(0, 255, 0, 0.7); /* Green glow */
+        border-radius: 10px; /* Optional: rounded corners */
+    background-color: #24c072;
+  }
+
+h1{
+    
+    color: rgb(19, 18, 18);
+    display: flex;
+    justify-content: center; /* Horizontal centering */
+    align-items: center;
+    font-family: 'Baufra', sans-serif;
+}
+
+
+img {
+    
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 200px; /* Set a width for the image */
+}

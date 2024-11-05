@@ -9,81 +9,59 @@
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+            background-color: #000000;
         }
         #formularioAutomacao {
             display: none;
             margin-bottom: 20px;
         }
         #logs, #logsErros {
-            border: 1px solid #ccc;
-            padding: 10px;
-            background-color: #f9f9f9;
-            height: 200px;
-            overflow-y: auto;
-            white-space: pre-wrap;
+            border: none;
+            background-color: #000000;
+            height: 100vh;
+            color: rgb(0, 255, 85);
+            justify-content: center;
+            width: 100%;
             font-family: monospace;
         }
-        button {
-            padding: 10px 15px;
-            margin-bottom: 20px;
-        }
-        img {
-            max-width: 200px; /* Limit the width of the logo */
-            height: auto;
-            margin-bottom: 20px;
-        }
+        
         .container {
+            max-width: 100%;
+            flex-direction: column;
+            justify-content: center;
             display: flex;
-            align-items: flex-start;
+            align-items: center;
         }
         .form-container {
+            max-width: 100%;
             flex: 1; /* Allow the form to take up space */
-            margin-right: 10px; /* Reduce space between form and counters */
+            align-items: center;
+            justify-content: center;
+            
         }
         .counter-container {
-            max-width: 150px; /* Limit the width of the counter section */
-            margin-left: 10px; /* Space between button and counters */
+            justify-content: center;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            max-width: 100vw; /* Limit the width of the counter section */
             font-size: 14px; /* Smaller font size for counters */
         }
     </style>
 </head>
 <body>
-    <img src="/logao.png" alt="Logotipo">
-    <h1>Console de Automação</h1>
-
-    <button id="botaoToggleFormulario">Abrir Formulário</button>
     <div class="form-container"></div>
     <div class="container">
+      
+            <div id="logs"></div>
+            
+            
+        </div>
         
-            <div id="formularioAutomacao">
-                <h2>Enviar Dados de Automação</h2>
-                <form id="form">
-                    <input type="text" name="name" placeholder="Nome" required>
-                    <input type="text" name="cadastro_number" placeholder="Número de Cadastro" required>
-                    <input type="text" name="city" placeholder="Cidade" required>
-                    <input type="text" name="bairro" placeholder="Bairro" required>
-                    <input type="text" name="date" placeholder="DD/MM" required>
-                    <input type="text" name="period" placeholder="Período" required>
-                    <input type="text" name="title" placeholder="Título" required>
-                    <textarea name="comentario" placeholder="Comentário" required></textarea>
-                    <button type="submit">Enviar</button>
-                </form>
-            </div>
-        </div>
-
-        <div class="counter-container">
-            <h2>Contadores</h2>
-            <p>Sucessos: <span id="contagemSucessos">0</span></p>
-            <p>Erros: <span id="contagemErros">0</span></p>
-        </div>
+            
     </div>
 
-    <h2>Logs</h2>
-    <div id="logs"></div>
     
-    <h2>Erros</h2>
-    <div id="logsErros"></div>
-
     <script>
         const ws = new WebSocket('wss://localhost:4443');
     

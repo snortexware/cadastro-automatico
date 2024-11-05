@@ -13,11 +13,12 @@
     "express": "^4.21.0",
     "fs": "^0.0.1-security",
     "https": "^1.0.0",
+    "node-schedule": "^2.1.1",
     "selenium-webdriver": "^4.24.1",
-    "ws": "^8.18.0",
-    "your-app-name": "file:"
+    "ws": "^8.18.0"
   },
   "devDependencies": {
-    "electron": "^25.9.8"
+    "electron": "^25.9.8",
+    "electron-packager": "^17.1.2"
   }
 }

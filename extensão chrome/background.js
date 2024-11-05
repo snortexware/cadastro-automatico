@@ -1,15 +1,15 @@
-// background.js
+
 let ws;
 
 function connectWebSocket() {
-    ws = new WebSocket('wss://localhost:4443'); // Adjust the URL as necessary
+    ws = new WebSocket('wss://192.168.88.183:4443');
 
     ws.onopen = () => {
         console.log('WebSocket connection established.');
     };
 
     ws.onmessage = (event) => {
-        const message = JSON.parse(event.data);
+        const message = JSON.parse('{"status": "Conectado ao servidor com sucesso"}');
         if (message.successCount !== undefined) {
             chrome.storage.local.set({ successCount: message.successCount });
         }
@@ -20,7 +20,7 @@ function connectWebSocket() {
 
     ws.onclose = () => {
         console.log('WebSocket connection closed. Reconnecting...');
-        setTimeout(connectWebSocket, 5000); // Reconnect after 5 seconds
+        setTimeout(connectWebSocket, 5000); 
     };
 
     ws.onerror = (error) => {
@@ -28,5 +28,5 @@ function connectWebSocket() {
     };
 }
 
-// Start the WebSocket connection when the service worker is activated
+
 connectWebSocket();
